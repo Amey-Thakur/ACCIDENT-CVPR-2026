@@ -887,7 +887,8 @@ FUNCTION {inproceedings}
         { address output.nonnull
           format.date "year" output.check
           new.sentence
-          organization Kirsten publisher output
+          organization output
+          publisher output
         }
       if$
     }
