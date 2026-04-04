@@ -1,0 +1,6 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We described a modular zero-shot pipeline for detecting, localizing, and classifying traffic accidents in CCTV footage, built for the ACCIDENT @ CVPR 2026 competition. The temporal module isolates the collision frame through z-score peak detection on frame differences. The spatial module accumulates Farneback optical flow and returns the weighted centroid as the predicted impact point. The classification module matches CLIP image embeddings of peak-region frames against multi-prompt text embeddings to select a collision type.
+
+Because the three modules share no parameters, each can be upgraded on its own. Two directions seem most promising. First, replacing Farneback optical flow with a learned estimator like RAFT~\cite{teed2020raft} could improve displacement accuracy on low-resolution input. Second, fine-tuning the CLIP visual encoder on the synthetic split may narrow the domain gap between internet imagery and surveillance stills, which currently limits classification performance.

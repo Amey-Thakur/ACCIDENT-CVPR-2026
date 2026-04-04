@@ -1,0 +1,10 @@
+\begin{abstract}
+We describe a zero-shot pipeline developed for the ACCIDENT @ CVPR 2026 challenge.
+The challenge requires predicting when, where, and what type of traffic accident occurs in surveillance video, without labeled real-world training data.
+Our method separates the problem into three independent modules.
+The first module localizes the collision in time by running peak detection on z-score normalized frame-difference signals.
+The second module finds the impact location by computing the weighted centroid of cumulative dense optical flow magnitude maps using the Farneback algorithm.
+The third module classifies collision type by measuring cosine similarity between CLIP image embeddings of frames near the detected peak and text embeddings built from multi-prompt natural language descriptions of each collision category.
+No domain-specific fine-tuning is involved; the pipeline processes each video using only pre-trained model weights.
+Our implementation is publicly available as a Kaggle notebook~\cite{thakur2026notebook}.
+\end{abstract}
