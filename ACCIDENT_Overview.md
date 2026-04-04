@@ -4,7 +4,8 @@
 
 **Notebook Focus:** Zero-shot temporal-spatial localization and classification of traffic accidents in surveillance footage.
 
-**Author:** [Amey Thakur](https://www.kaggle.com/ameythakur20)
+**Author:** [Amey Thakur](https://www.kaggle.com/ameythakur20) & [Sarvesh Talele](https://www.kaggle.com/sarveshtalele)
+
 
 ---
 
