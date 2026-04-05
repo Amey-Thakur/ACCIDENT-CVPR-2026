@@ -5,7 +5,14 @@
 
 The ACCIDENT @ CVPR 2026 dataset~\cite{accident2026} has two splits. The development split contains 2,211 synthetic CCTV-style videos rendered with the CARLA simulator~\cite{dosovitskiy2017carla} across five collision categories, each annotated with accident time, impact coordinates, and collision type. Figure~\ref{fig:type_freq} shows the class distribution: rear-end collisions are the most frequent category (794 videos), followed by head-on (588), sideswipe (405), t-bone (358), and single-vehicle (66). The test split contains 2,027 real surveillance recordings collected from public traffic camera feeds. Test videos vary in resolution, frame rate, and lighting. Compression artifacts, lens distortion, and partial occlusion are common. Participants may not annotate the test split by hand, so any method that runs on it must generalize from the synthetic domain or from general-purpose pre-training alone.
 
-All synthetic videos are rendered at $1920 \times 1080$ resolution with a fixed 20 FPS frame rate. Clip durations range from 5.8 to 32.2 seconds (mean 17.7 seconds, standard deviation 3.9 seconds). The ground-truth accident time occurs at a median of 6.9 seconds into the clip (interquartile range 5.2 to 9.8 seconds), which places most collisions in the first half of each recording. Impact coordinates are normalized to $[0,1]^{2}$ and cluster toward the frame center: both $c_x$ and $c_y$ have means near 0.50 and standard deviations of 0.13 and 0.18, respectively (Figure~\ref{fig:impact_scatter}).
+All synthetic videos are rendered at $1920 \times 1080$ resolution with a fixed 20 FPS frame rate. Clip durations range from 5.8 to 32.2 seconds (mean 17.7 seconds, standard deviation 3.9 seconds). The ground-truth accident time occurs at a median of 6.9 seconds into the clip (interquartile range 5.2 to 9.8 seconds), which places most collisions in the first half of each recording (Figure~\ref{fig:time_dist}). Impact coordinates are normalized to $[0,1]^{2}$ and cluster toward the frame center: both $c_x$ and $c_y$ have means near 0.50 and standard deviations of 0.13 and 0.18, respectively (Figure~\ref{fig:impact_scatter}).
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig/accident_time_dist.png}
+    \caption{Distribution of ground-truth accident times (seconds) across the 2,211 synthetic videos. Most incidents occur within the first 10 seconds of the clip.}
+    \label{fig:time_dist}
+\end{figure}
 
 \begin{figure}[t]
     \centering
