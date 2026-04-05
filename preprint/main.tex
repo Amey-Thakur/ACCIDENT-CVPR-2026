@@ -224,7 +224,7 @@ All synthetic videos are rendered at $1920 \times 1080$ resolution with a fixed 
 
 \subsection{Implementation}
 
-We run inference on a single NVIDIA T4 GPU provided by the Kaggle platform. Collision classification uses the ViT-B/32 variant of CLIP~\citep{radford2021learning}. All video frames are resized to $320 \times 180$ for frame-differencing and optical flow. We do not train or fine-tune any model weights on either split of the dataset. Processing all 2,027 test videos takes approximately 4 hours.
+We run inference on a single NVIDIA T4 GPU provided by the Kaggle platform. Collision classification uses the ViT-B/32 variant of CLIP~\citep{radford2021learning}. All video frames are resized to $320 \times 180$ for frame-differencing and optical flow. We do not train or fine-tune any model weights on either split of the dataset. Processing all 2,027 test videos takes approximately 2 hours.
 
 Table~\ref{tab:hyperparams} lists the hyperparameters used across the pipeline. We chose these values by visual inspection on a handful of synthetic videos and kept them fixed for all test predictions.
 

@@ -109,22 +109,24 @@ The classification bottleneck is the primary limitation: CLIP predicts `t-bone` 
 
 ## Repository Structure
 
-```
-.
-├── paper/                  # CVPR 2026 submission (LaTeX, two-column)
-│   ├── main.tex
-│   ├── main.bib
-│   ├── sec/                # Abstract, intro, method, experiments, conclusion
-│   └── fig/                # Figures used in the paper
-├── preprint/               # arXiv preprint (LaTeX, single-column)
-│   ├── main.tex
-│   ├── references.bib
-│   ├── arxiv.sty
-│   └── images/             # Figures used in the preprint
-├── Notebook/               # Kaggle notebook (exported .ipynb)
-├── workspace/              # Development notebooks and iterations
-├── figure/                 # All diagnostic and analysis figures
-└── .github/workflows/      # CI: LaTeX → PDF compilation
+```python
+# Repository Structure
+#
+# .
+# ├── paper/                  # CVPR 2026 submission (LaTeX, two-column)
+# │   ├── main.tex
+# │   ├── main.bib
+# │   ├── sec/                # Abstract, intro, method, experiments, conclusion
+# │   └── fig/                # Figures used in the paper
+# ├── preprint/               # arXiv preprint (LaTeX, single-column)
+# │   ├── main.tex
+# │   ├── references.bib
+# │   ├── arxiv.sty
+# │   └── images/             # Figures used in the preprint
+# ├── Notebook/               # Kaggle notebook (exported .ipynb)
+# ├── workspace/              # Development notebooks and iterations
+# ├── figure/                 # All diagnostic and analysis figures
+# └── .github/workflows/      # CI: LaTeX → PDF compilation
 ```
 
 ---
@@ -135,7 +137,7 @@ The classification bottleneck is the primary limitation: CLIP predicts `t-bone` 
 
 [![Open in Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://www.kaggle.com/code/ameythakur20/zero-shot-cctv-traffic-accident-understanding/)
 
-The notebook runs end-to-end on a single NVIDIA T4 GPU and processes all 2,027 test videos in approximately 4 hours.
+The notebook runs end-to-end on a single NVIDIA T4 GPU and processes all 2,027 test videos in approximately 2 hours.
 
 ### Build the Paper
 
