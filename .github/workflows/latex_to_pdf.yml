@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-paper:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,3 +24,21 @@ jobs:
         with:
           name: CVPR_2026_Paper
           path: paper/main.pdf
+
+  build-preprint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile Preprint
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: preprint
+
+      - name: Upload Preprint PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArXiv_Preprint
+          path: preprint/main.pdf
