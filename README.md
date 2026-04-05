@@ -1,97 +1,228 @@
-# ACCIDENT @ CVPR: Zero-Shot Accident Detection and Localization
+# ACCIDENT @ CVPR 2026: Zero-Shot Accident Detection Pipeline
 
-**Competition:** ACCIDENT @ CVPR: Zero-Shot Accident Detection from Traffic Surveillance Videos
+[![Open in Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://www.kaggle.com/code/ameythakur20/zero-shot-cctv-traffic-accident-understanding/)
+[![Paper](https://img.shields.io/badge/Paper-CVPR%202026-blue)](paper/)
+[![Preprint](https://img.shields.io/badge/Preprint-arXiv-b31b1b)](preprint/)
 
-**Notebook Focus:** Zero-shot temporal-spatial localization and classification of traffic accidents in surveillance footage.
+A modular zero-shot pipeline for detecting, localizing, and classifying traffic accidents in CCTV surveillance video. Built for the [ACCIDENT @ CVPR 2026](https://kaggle.com/competitions/accident) competition hosted at the [AUTOPILOT Workshop](https://wad.vision/).
 
-**Author:** [Amey Thakur](https://www.kaggle.com/ameythakur20) & [Sarvesh Talele](https://www.kaggle.com/sarveshtalele)
+**Authors:** [Amey Thakur](https://orcid.org/0000-0001-5644-1575) · [Sarvesh Talele](https://orcid.org/0009-0002-0818-461X)
 
-
----
-
-## Table of Contents
-
-1. [Data Acquisition](#1-data-acquisition)
-2. [Data Inspection](#2-data-inspection)
-3. [Data Cleaning](#3-data-cleaning)
-4. [EDA](#4-eda)
-5. [Feature Engineering](#5-feature-engineering)
-6. [Modeling](#6-modeling)
-7. [Evaluation](#7-evaluation)
-8. [Conclusion](#8-conclusion)
-9. [AUTOPILOT Workshop](#9-autopilot-workshop)
-10. [CVPR 2026 Author Guidelines](#10-cvpr-2026-author-guidelines)
-11. [References](#11-references)
+**Public Leaderboard Score:** `0.25230`
 
 ---
 
-## 1. Data Acquisition
+## Overview
 
-The primary objective of this challenge is to evaluate models on real-world traffic accident data without localized training on the target domain. The dataset architecture is bifurcated into a synthetic development set and a real-world test set. The synthetic data, generated via the CARLA simulator, provides high-fidelity CCTV-style viewpoints with comprehensive ground-truth annotations for pre-training and validation. The test set consists of genuine CCTV clips sourced from public traffic feeds, representing the authentic environmental challenges of surveillance monitoring.
+Given a surveillance video, the pipeline predicts three things without any labeled real-world training data:
 
-## 2. Data Inspection
+| Task | Method | Output |
+|------|--------|--------|
+| **When** did the accident happen? | Z-score peak detection on frame differences | Accident time in seconds |
+| **Where** did the impact occur? | Weighted centroid of thresholded Farneback optical flow | Normalized (x, y) coordinates |
+| **What type** of collision? | CLIP cosine similarity with multi-prompt text embeddings | One of 5 collision types |
 
-Initial data analysis involves navigating two distinct metadata structures. For the synthetic dataset, `labels.csv` serves as the central index, containing temporal indices, spatial coordinates (normalized to $[0, 1]$), and semantic classification for each collision scenario. Accompanying these are compressed JSON files providing per-frame simulator telemetry. The real-world test set is documented in `test_metadata.csv`, which provides coarse scene attributes such as lighting conditions and weather states to facilitate post-hoc performance stratification across diverse environmental contexts.
+The three modules are independent — each can be swapped or tuned without touching the others. No model weights are fine-tuned; the pipeline runs entirely on pre-trained CLIP (ViT-B/32) and classical computer vision.
 
-## 3. Data Cleaning
+<p align="center">
+  <img src="figure/sampled_frames.png" width="100%" alt="Sampled frames from a synthetic CARLA traffic incident"/>
+</p>
 
-Data preparation for surveillance footage requires addressing systematic noise inherent to fixed-view CCTV systems. Common artifacts include low spatial resolution, temporal jitter from compression codecs, and significant occlusions from infrastructure or other vehicles. The cleaning protocol must account for these degradations to ensure that the localization algorithms remain robust. In the synthetic domain, alignment between simulator offsets and video timestamps is critical for precise temporal ground-truth synchronization.
+---
 
-## 4. EDA
+## Pipeline Architecture
 
-Exploratory Data Analysis focuses on the distribution of accident types and environmental variables. The synthetic set contains a variety of scenarios such as head-on collisions, rear-end impacts, and T-bone accidents. Analysis of the `test_metadata.csv` tags reveals the diversity in camera layouts and illumination levels, which are critical for evaluating model generalization. Understanding the variance in vehicle speeds and impact angles across different CARLA maps provides a foundation for designing robust spatial-temporal priors.
+### 1. Temporal Localization
 
-## 5. Feature Engineering
+Computes mean absolute frame differences, smooths with a rolling window (w=5), normalizes to z-scores, and selects the frame with the highest anomaly score above threshold (τ=1.5).
 
-Feature extraction for this competition is centered on three primary dimensions: temporal event boundaries, spatial impact points, and semantic collision attributes. Effective features must capture the pre-collision trajectory dynamics and the sudden kinetic changes at the moment of impact. Given the zero-shot requirement, features derived from foundation models or general-purpose video encoders are preferred over those requiring extensive fine-tuning. Spatial localization relies on normalized coordinate systems to maintain consistency across varying camera aspect ratios.
+<p align="center">
+  <img src="figure/frame_diff_zscore.png" width="80%" alt="Frame difference series and z-score temporal signal"/>
+</p>
 
-## 6. Modeling
+### 2. Spatial Impact Localization
 
-The modeling strategy is constrained by the training-free / zero-shot nature of the benchmark on real CCTV footage. Approaches involve the use of pre-trained visual-language models or temporal action localization architectures that can generalize from synthetic data to real-world distributions. The objective is to design a pipeline that can identify "when," "where," and "what type" of accident occurred without domain-specific supervised tuning on the real test set. Robustness to visual clutter and wide fields of view is a prerequisite for successful deployment.
+Centers a 30-frame window on the detected accident time, accumulates Farneback dense optical flow magnitudes, applies 90th-percentile thresholding, and computes the weighted centroid of the remaining high-motion region.
 
-## 7. Evaluation
+<p align="center">
+  <img src="figure/heatmap.png" width="80%" alt="Optical flow magnitude heatmap showing impact localization"/>
+</p>
 
-The evaluation metric is the harmonic mean of three component scores, emphasizing balanced performance across all tasks. The temporal score ($\mathcal{T}$) and spatial score ($\mathcal{S}$) both utilize Gaussian-style similarity functions. These functions ensure that small errors in predicted time or location coordinates result in scores near 1.0, with a smooth decay towards zero as the deviation from ground truth increases. The classification score ($\mathcal{C}$) is based on Top-1 accuracy for the impact type. A significant deficiency in any single metric results in a substantial reduction of the final composite score.
+### 3. Collision Type Classification
 
-## 8. Conclusion
+Extracts 8 frames around the detected peak, encodes them with CLIP ViT-B/32, and compares the averaged image embedding against 5 text embeddings (one per collision type), each built from 5 prompt templates.
 
-*   The ACCIDENT @ CVPR challenge addresses the high-impact problem of automated accident detection in resource-constrained environments.
-*   Zero-shot generalization from synthetic simulations to real CCTV footage is the primary technical hurdle.
-*   The use of harmonic mean as a scoring metric necessitates high precision across temporal, spatial, and semantic predictions.
-*   Robustness to low-resolution and occluded video inputs is essential for viable surveillance-based incident response.
+**Collision types:** `head-on` · `rear-end` · `sideswipe` · `single-vehicle` · `t-bone`
 
-## 9. AUTOPILOT Workshop
+---
 
-The ACCIDENT competition is hosted in conjunction with the 3rd edition of the AUTOPILOT workshop at CVPR 2026. This venue focuses on safety-critical autonomous driving, specifically emphasizing robust perception, trajectory forecasting, and the deployment of distilled foundation models for on-vehicle applications. A central theme of the workshop is open-world learning, which seeks to identify and mitigate out-of-distribution (OOD) hazards and events that fall outside standard taxonomic definitions.
+## Dataset
 
-### Submission Tracks
+The competition provides two splits:
 
-The workshop provides two primary tracks for research dissemination. Full papers containing significant technical contributions may be submitted to the Archival Track, with accepted works appearing in the official CVPR 2026 workshop proceedings. The archival submission deadline is March 04, 2026. For preliminary findings or work-in-progress, the Non-Archival Track accepts extended abstracts and position papers, with a deadline of April 15, 2026. Accepted participants are required to provide a 5-minute video presentation, poster materials, and slides.
+| Split | Source | Videos | Annotations |
+|-------|--------|--------|-------------|
+| Development | CARLA simulator (synthetic) | 2,211 | Accident time, impact coordinates, collision type |
+| Test | Real CCTV footage | 2,027 | Hidden (evaluated on Kaggle) |
 
-### Core Research Topics
+<p align="center">
+  <img src="figure/collision_type_freq.png" width="45%" alt="Collision type distribution"/>
+  &nbsp;&nbsp;
+  <img src="figure/accident_time_dist.png" width="45%" alt="Accident time distribution"/>
+</p>
 
-Research topics prioritized for the workshop include multimodal reasoning through vision-language models, embodied AI for decision-making, and open-vocabulary learning for robust hazard detection. Additional areas of interest involve multimodal sensor fusion (LiDAR, radar, and camera), spatio-temporal representation learning, and synthetic-to-real transfer protocols. The workshop aims to bridge the gap between academic research and industrial implementation while maintaining a focus on reproducible evaluation and safety-centric metrics.
+<p align="center">
+  <img src="figure/impact_scatter.png" width="45%" alt="Ground-truth impact point distribution"/>
+  &nbsp;&nbsp;
+  <img src="figure/impact_kde.png" width="45%" alt="Impact point density"/>
+</p>
 
-## 10. CVPR 2026 Author Guidelines
+---
 
-Submissions to CVPR 2026 must comply with rigorous technical and ethical standards. Authors are responsible for ensuring that all manuscripts are self-contained and adhere to the zero-tolerance policy regarding prompt injection or hidden instructions designed to influence automated tools or reviewers. Failure to comply with these formatting or ethical requirements may result in immediate desk rejection.
+## Results
 
-### Formatting and Anonymization
+**Public leaderboard score: 0.25230** (computed on ~25% of test data)
 
-The standard paper length is limited to eight pages, including all figures and tables, with additional pages permitted only for cited references. All submissions must be properly anonymized to support the double-blind review process. Authors are prohibited from including external links (e.g., to code repositories, videos, or project websites) that expand content beyond the submitted PDF and supplementary files. Identifying information in acknowledgments, grant IDs, or demo videos is strictly forbidden during the review phase.
+Calibration on a 10-video synthetic subset:
 
-### New Initiatives for 2026
+| Component | Mean Score | Best Individual |
+|-----------|-----------|-----------------|
+| Temporal (𝒯) | 0.438 | 0.94 |
+| Spatial (𝒮) | 0.168 | 0.96 |
+| Classification (𝒞) | 0.0 | 0.0 |
 
-*   **Compute Reporting**: CVPR 2026 introduces an experimental initiative requiring authors to report the computational resources used during research. These reports are intended for community benchmarking and do not influence the review process.
-*   **Findings Track**: A new publication venue is available for papers characterized by solid experimental validation and technical soundness, even if the novelty is incremental. Area Chairs recommend papers to this track based on review outcomes.
-*   **Prompt Injection Policy**: Any attempt to hide instructions within the text to manipulate reviewers or LLM-based analysis tools is classified as an ethics violation.
+The classification bottleneck is the primary limitation: CLIP predicts `t-bone` for all calibration videos (which are all `head-on`), driven by the domain gap between internet imagery and CCTV stills.
 
-### General Policies
+<p align="center">
+  <img src="figure/pred_collision_dist.png" width="45%" alt="Predicted collision type distribution on test set"/>
+  &nbsp;&nbsp;
+  <img src="figure/score_distributions.png" width="45%" alt="Component score distributions"/>
+</p>
 
-The conference enforces a strict dual submission policy, where no manuscript with more than 20 percent overlap may be under review at another peer-reviewed venue simultaneously. ArXiv preprints are permitted but must not be cited in a way that compromises anonymity. Authors are also expected to serve as reviewers unless they are new to the computer vision community or otherwise exempt. Each individual is limited to a maximum of 25 paper submissions.
+<p align="center">
+  <img src="figure/temporal_score_curve.png" width="45%" alt="Temporal score vs time error"/>
+  &nbsp;&nbsp;
+  <img src="figure/spatial_score_curve.png" width="45%" alt="Spatial score vs location error"/>
+</p>
 
-## 11. References
+---
 
-- Picek, L., et al. (2026). *ACCIDENT @ CVPR: Zero-Shot Accident Detection from Traffic Surveillance Videos*. Kaggle Competition. [Link](https://kaggle.com/competitions/accident)
-- Picek, L., Čermák, V., et al. (2025). *Zero-shot hazard identification in autonomous driving: A case study on the COOCOL benchmark*. WACV 2025.
-- AUTOPILOT Workshop at CVPR 2026. [Workshop Site](https://wad.vision/)
+## Repository Structure
+
+```
+.
+├── paper/                  # CVPR 2026 submission (LaTeX, two-column)
+│   ├── main.tex
+│   ├── main.bib
+│   ├── sec/                # Abstract, intro, method, experiments, conclusion
+│   └── fig/                # Figures used in the paper
+├── preprint/               # arXiv preprint (LaTeX, single-column)
+│   ├── main.tex
+│   ├── references.bib
+│   ├── arxiv.sty
+│   └── images/             # Figures used in the preprint
+├── Notebook/               # Kaggle notebook (exported .ipynb)
+├── workspace/              # Development notebooks and iterations
+├── figure/                 # All diagnostic and analysis figures
+└── .github/workflows/      # CI: LaTeX → PDF compilation
+```
+
+---
+
+## Quick Start
+
+### Run on Kaggle
+
+[![Open in Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://www.kaggle.com/code/ameythakur20/zero-shot-cctv-traffic-accident-understanding/)
+
+The notebook runs end-to-end on a single NVIDIA T4 GPU and processes all 2,027 test videos in approximately 4 hours.
+
+### Build the Paper
+
+The GitHub Actions workflow automatically compiles both the CVPR paper and arXiv preprint on every push. You can also build locally:
+
+```bash
+cd paper && latexmk -pdf main.tex
+cd preprint && latexmk -pdf main.tex
+```
+
+---
+
+## Scoring
+
+The competition uses the harmonic mean of three components:
+
+$$\mathcal{H} = \frac{3}{\frac{1}{\mathcal{T}} + \frac{1}{\mathcal{S}} + \frac{1}{\mathcal{C}}}$$
+
+- **Temporal** (𝒯): Gaussian similarity with σ = 2.0 seconds
+- **Spatial** (𝒮): Gaussian similarity with σ = 0.1 (normalized coordinates)
+- **Classification** (𝒞): Top-1 accuracy
+
+A zero in any component forces the composite score to zero.
+
+---
+
+## Additional Figures
+
+<details>
+<summary>Click to expand all diagnostic figures</summary>
+
+### Bounding Box Statistics
+<p align="center">
+  <img src="figure/bbox_area.png" width="30%" alt="Bounding box area"/>
+  <img src="figure/bbox_height.png" width="30%" alt="Bounding box height"/>
+  <img src="figure/bbox_width.png" width="30%" alt="Bounding box width"/>
+</p>
+
+### Temporal Analysis
+<p align="center">
+  <img src="figure/accident_time_by_type.png" width="45%" alt="Accident time by collision type"/>
+  &nbsp;&nbsp;
+  <img src="figure/accident_time_frac.png" width="45%" alt="Accident time as fraction of clip duration"/>
+</p>
+
+### Test Set Predictions
+<p align="center">
+  <img src="figure/pred_time_dist.png" width="45%" alt="Predicted accident time distribution"/>
+  &nbsp;&nbsp;
+  <img src="figure/pred_impact_scatter.png" width="45%" alt="Predicted impact locations"/>
+</p>
+
+### Dataset Features
+<p align="center">
+  <img src="figure/weather_dist.png" width="45%" alt="Weather distribution"/>
+  &nbsp;&nbsp;
+  <img src="figure/correlation_matrix.png" width="45%" alt="Feature correlation matrix"/>
+</p>
+
+</details>
+
+---
+
+## Citation
+
+```bibtex
+@misc{thakur2026zershot,
+  title={A Modular Zero-Shot Pipeline for Accident Detection, Localization, 
+         and Classification in Traffic Surveillance Video},
+  author={Thakur, Amey and Talele, Sarvesh},
+  year={2026},
+  howpublished={ACCIDENT @ CVPR 2026 Workshop},
+  note={\url{https://www.kaggle.com/code/ameythakur20/zero-shot-cctv-traffic-accident-understanding}}
+}
+```
+
+---
+
+## References
+
+- Picek, L., Čermák, V., et al. [ACCIDENT @ CVPR 2026](https://kaggle.com/competitions/accident). Kaggle Competition.
+- [AUTOPILOT Workshop at CVPR 2026](https://wad.vision/)
+- Radford, A., et al. (2021). [Learning Transferable Visual Models from Natural Language Supervision](https://arxiv.org/abs/2103.00020). ICML.
+- Farnebäck, G. (2003). Two-Frame Motion Estimation Based on Polynomial Expansion. SCIA.
+
+---
+
+## License
+
+This repository is released for academic research purposes in conjunction with the ACCIDENT @ CVPR 2026 competition.
