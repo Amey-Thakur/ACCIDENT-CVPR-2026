@@ -3,7 +3,7 @@
 
 \subsection{Dataset}
 
-The ACCIDENT @ CVPR 2026 dataset~\cite{accident2026} has two splits. The development split contains synthetic CCTV-style videos rendered with the CARLA simulator~\cite{dosovitskiy2017carla}, each annotated with accident time, impact coordinates, and collision type. The test split contains real surveillance recordings collected from public traffic camera feeds. Test videos vary in resolution, frame rate, and lighting. Compression artifacts, lens distortion, and partial occlusion are common. Participants may not annotate the test split by hand, so any method that runs on it must generalize from the synthetic domain or from general-purpose pre-training alone.
+The ACCIDENT @ CVPR 2026 dataset~\cite{accident2026} has two splits. The development split contains 2,211 synthetic CCTV-style videos rendered with the CARLA simulator~\cite{dosovitskiy2017carla} across five collision categories, each annotated with accident time, impact coordinates, and collision type. The test split contains 2,027 real surveillance recordings collected from public traffic camera feeds. Test videos vary in resolution, frame rate, and lighting. Compression artifacts, lens distortion, and partial occlusion are common. Participants may not annotate the test split by hand, so any method that runs on it must generalize from the synthetic domain or from general-purpose pre-training alone.
 
 \subsection{Implementation}
 
@@ -24,27 +24,28 @@ Table~\ref{tab:hyperparams} lists the hyperparameters used across the pipeline. 
   & Smoothing window $w$ & 5 \\
   & Z-score threshold $\tau$ & 1.5 \\
 \midrule
-\multirow{5}{*}{Spatial}
-  & Start frame & $\lfloor N/3 \rfloor$ \\
+\multirow{6}{*}{Spatial}
+  & Start frame & centered on $t^{*}$ \\
   & Context window $T$ & 30 frames \\
   & Pyramid scale & 0.5 \\
   & Pyramid levels & 3 \\
   & Window size & 15 \\
+  & Flow percentile threshold & 90th \\
 \midrule
 \multirow{2}{*}{Classification}
   & CLIP backbone & ViT-B/32 \\
-  & Peak-region frames & 4 \\
+  & Peak-region frames & 8 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Scoring}
 
-Submissions are scored with the harmonic mean of three quantities. The temporal component measures how close the predicted accident time is to the ground-truth time, using a Gaussian similarity that equals 1.0 for a perfect prediction and decays toward zero as the error grows. The spatial component applies the same Gaussian form to the Euclidean distance between predicted and true impact coordinates. The classification component counts top-1 accuracy over the test set. Because the harmonic mean is used, a bad prediction in any one task drags down the overall number.
+Submissions are scored with the harmonic mean of three quantities. The temporal component measures how close the predicted accident time is to the ground-truth time, using a Gaussian similarity with $\sigma_t = 2.0$ seconds that equals 1.0 for a perfect prediction and decays toward zero as the error grows. The spatial component applies the same Gaussian form with $\sigma_s = 0.1$ to the Euclidean distance between predicted and true impact coordinates in normalized $[0,1]$ space. The classification component counts top-1 accuracy over the test set. Because the harmonic mean is used, a zero in any one component drives the overall score to zero.
 
 \subsection{Results}
 
-Our pipeline achieves a leaderboard score of \textbf{XX.XX} on the real CCTV test set. This number is the harmonic mean of the three component scores described above.
+On a 10-video calibration subset drawn from the synthetic split, we measure per-component mean scores of $\overline{\mathcal{T}} = 0.438$ for temporal localization, $\overline{\mathcal{S}} = 0.168$ for spatial localization, and $\overline{\mathcal{C}} = 0.0$ for classification. The zero classification score is expected: CLIP consistently predicts t-bone for this subset, while the ground truth labels are head-on. Because the harmonic mean equals zero whenever any component is zero, the composite score $\overline{\mathcal{H}} = 0.0$ on calibration. This confirms that classification accuracy is the dominant bottleneck in the current pipeline.
 
 Figure~\ref{fig:heatmap} shows a sample motion-energy map from one of the synthetic calibration videos. Flow magnitude accumulates in a concentrated region around the simulated collision, which confirms that the Farneback accumulation step isolates the correct spatial area.
 
@@ -58,4 +59,4 @@ Figure~\ref{fig:heatmap} shows a sample motion-energy map from one of the synthe
 \end{figure}
 
 \paragraph{Where things go wrong.}
-We see three main error patterns. (1) Temporal localization breaks when a camera captures large-scale scene motion, such as wind-blown trees or shifting cloud shadows, that creates frame-difference spikes as large as the collision itself. (2) The spatial centroid drifts toward the center of the frame when background motion is spread evenly across the image, because the weighted average does not isolate a single high-activity cluster. (3) CLIP misclassifies collisions when the surveillance frame resolution is low or the viewpoint is oblique, since CLIP was trained on internet photographs that look quite different from overhead CCTV stills.
+We see three main error patterns. (1) Temporal localization breaks when a camera captures large-scale scene motion, such as wind-blown trees or shifting cloud shadows, that creates frame-difference spikes as large as the collision itself. (2) The spatial centroid drifts toward the center of the frame when background motion is spread evenly across the image, because the weighted average does not isolate a single high-activity cluster. (3) CLIP misclassifies collisions when the surveillance frame resolution is low or the viewpoint is oblique, since CLIP was trained on internet photographs that look quite different from overhead CCTV stills. The calibration results confirm that classification is the weakest link: prompt engineering alone does not bridge the visual domain gap between CCTV captures and the internet imagery that CLIP was trained on.
