@@ -3,7 +3,14 @@
 
 \subsection{Dataset}
 
-The ACCIDENT @ CVPR 2026 dataset~\cite{accident2026} has two splits. The development split contains 2,211 synthetic CCTV-style videos rendered with the CARLA simulator~\cite{dosovitskiy2017carla} across five collision categories, each annotated with accident time, impact coordinates, and collision type. The test split contains 2,027 real surveillance recordings collected from public traffic camera feeds. Test videos vary in resolution, frame rate, and lighting. Compression artifacts, lens distortion, and partial occlusion are common. Participants may not annotate the test split by hand, so any method that runs on it must generalize from the synthetic domain or from general-purpose pre-training alone.
+The ACCIDENT @ CVPR 2026 dataset~\cite{accident2026} has two splits. The development split contains 2,211 synthetic CCTV-style videos rendered with the CARLA simulator~\cite{dosovitskiy2017carla} across five collision categories, each annotated with accident time, impact coordinates, and collision type. Figure~\ref{fig:type_freq} shows the class distribution: rear-end collisions are the most frequent (794 videos), followed by head-on (588), sideswipe (405), t-bone (358), and single-vehicle (66). The test split contains 2,027 real surveillance recordings collected from public traffic camera feeds. Test videos vary in resolution, frame rate, and lighting. Compression artifacts, lens distortion, and partial occlusion are common. Participants may not annotate the test split by hand, so any method that runs on it must generalize from the synthetic domain or from general-purpose pre-training alone.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig/collision_type_freq.png}
+    \caption{Collision type distribution in the synthetic development split. Rear-end is the most frequent category; single-vehicle events are rare.}
+    \label{fig:type_freq}
+\end{figure}
 
 \subsection{Implementation}
 
@@ -45,18 +52,34 @@ Submissions are scored with the harmonic mean of three quantities. The temporal 
 
 \subsection{Results}
 
-On a 10-video calibration subset drawn from the synthetic split, we measure per-component mean scores of $\overline{\mathcal{T}} = 0.438$ for temporal localization, $\overline{\mathcal{S}} = 0.168$ for spatial localization, and $\overline{\mathcal{C}} = 0.0$ for classification. The zero classification score is expected: CLIP consistently predicts t-bone for this subset, while the ground truth labels are head-on. Because the harmonic mean equals zero whenever any component is zero, the composite score $\overline{\mathcal{H}} = 0.0$ on calibration. This confirms that classification accuracy is the dominant bottleneck in the current pipeline.
+Our pipeline achieves a public leaderboard score of \textbf{0.2523} on the real CCTV test set. This score is computed on approximately 25\% of the test data; the final ranking uses the remaining 75\%, so standings may shift.
 
-Figure~\ref{fig:heatmap} shows a sample motion-energy map from one of the synthetic calibration videos. Flow magnitude accumulates in a concentrated region around the simulated collision, which confirms that the Farneback accumulation step isolates the correct spatial area.
+On the 10-video synthetic calibration subset, the per-component mean scores are $\overline{\mathcal{T}} = 0.438$ for temporal localization, $\overline{\mathcal{S}} = 0.168$ for spatial localization, and $\overline{\mathcal{C}} = 0.0$ for classification. The zero classification score on calibration is expected: CLIP consistently predicts t-bone for this head-on-only subset, confirming that the domain gap between CCTV imagery and CLIP's internet training distribution is the dominant bottleneck. Figure~\ref{fig:score_dist} shows the score distributions across the calibration set.
 
-% NOTE: Export the heatmap figure from the notebook and save as fig/heatmap.pdf
 \begin{figure}[t]
     \centering
-    % \includegraphics[width=\linewidth]{fig/heatmap.pdf}
-    \fbox{\parbox{0.9\linewidth}{\centering\vspace{2em}\textit{[Export motion heatmap from notebook Section 4.2]}\vspace{2em}}}
-    \caption{Accumulated flow magnitude on a synthetic calibration video. High values concentrate at the collision site.}
+    \includegraphics[width=\linewidth]{fig/score_distributions.png}
+    \caption{Component score distributions on the synthetic calibration set (10 videos). Temporal scores are spread between 0 and 1; spatial scores cluster near zero; classification is uniformly zero due to systematic misclassification.}
+    \label{fig:score_dist}
+\end{figure}
+
+Figure~\ref{fig:temporal_signal} shows the frame-difference series and corresponding z-score anomaly signal on a synthetic calibration video. The raw signal captures both gradual intensity variations from normal driving and a sharp spike at the collision. The z-score normalization isolates the anomalous event above the baseline noise floor.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig/frame_diff_zscore.png}
+    \caption{Temporal localization signal on a synthetic video. Top: raw mean absolute frame difference. Bottom: z-score anomaly series with the detection threshold (dashed line). The collision event produces a distinct spike.}
+    \label{fig:temporal_signal}
+\end{figure}
+
+Figure~\ref{fig:heatmap} shows a sample motion-energy map from one of the synthetic calibration videos. Flow magnitude accumulates in a concentrated region around the simulated collision, which confirms that the Farneback accumulation and 90th-percentile thresholding steps isolate the correct spatial area.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig/heatmap.png}
+    \caption{Accumulated Farneback optical flow magnitude on a synthetic calibration video after 90th-percentile thresholding. High values concentrate at the collision site; background motion is suppressed.}
     \label{fig:heatmap}
 \end{figure}
 
 \paragraph{Where things go wrong.}
-We see three main error patterns. (1) Temporal localization breaks when a camera captures large-scale scene motion, such as wind-blown trees or shifting cloud shadows, that creates frame-difference spikes as large as the collision itself. (2) The spatial centroid drifts toward the center of the frame when background motion is spread evenly across the image, because the weighted average does not isolate a single high-activity cluster. (3) CLIP misclassifies collisions when the surveillance frame resolution is low or the viewpoint is oblique, since CLIP was trained on internet photographs that look quite different from overhead CCTV stills. The calibration results confirm that classification is the weakest link: prompt engineering alone does not bridge the visual domain gap between CCTV captures and the internet imagery that CLIP was trained on.
+We see three main error patterns. (1) Temporal localization breaks when a camera captures large-scale scene motion, such as wind-blown trees or shifting cloud shadows, that creates frame-difference spikes as large as the collision itself. (2) The spatial centroid drifts toward the center of the frame when background motion is spread evenly across the image, because the weighted average does not isolate a single high-activity cluster. (3) CLIP misclassifies collisions when the surveillance frame resolution is low or the viewpoint is oblique, since CLIP was trained on internet photographs that look quite different from overhead CCTV stills. The nonzero public leaderboard score (0.2523) indicates that the pipeline does achieve partial classification accuracy on the broader test set, even though calibration on head-on-only synthetic videos shows a zero match rate.
