@@ -37,6 +37,15 @@ with $\varepsilon = 10^{-8}$ to avoid division by zero. Any frame whose $z_t$ ex
 \end{equation}
 with $\tau = 1.5$. Taking the highest-scoring candidate among threshold-crossers favors the most prominent motion event. When no frame crosses the threshold, we fall back to the global maximum. Time in seconds is $t^{*} = t^{*}_{\text{frame}} / f$.
 
+Figure~\ref{fig:temporal_signal} shows the raw frame-difference series and its z-score transform for a synthetic head-on collision. The raw signal (top panel) contains a mixture of gradual intensity drift from vehicle motion and a sharp transient near the collision moment. After smoothing and normalization (bottom panel), the collision event stands out as a distinct peak while background variation stays below the detection threshold.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig/frame_diff_zscore.png}
+    \caption{Temporal localization on a synthetic CARLA video. Top: mean absolute frame difference $d_t$ across all frames. Bottom: z-score anomaly series $z_t$ after rolling-mean smoothing. The dashed line marks the detection threshold.}
+    \label{fig:temporal_signal}
+\end{figure}
+
 \subsection{Spatial Impact Localization}
 
 A collision concentrates high-magnitude motion in a small region of the image. We identify that region by accumulating dense optical flow over a short window and then computing the weighted centroid of the resulting magnitude map.
@@ -55,6 +64,15 @@ Before extracting the centroid, we apply a percentile threshold at the 90th perc
     \label{eq:centroid}
 \end{equation}
 If $\sum M < 10^{-6}$, we return the frame center $(0.5, 0.5)$. This centroid calculation is a special case of the image moment framework introduced by Hu~\cite{hu1962visual}, applied to flow magnitudes instead of pixel intensities.
+
+Figure~\ref{fig:heatmap} shows the accumulation result on a synthetic video. The collision region concentrates most of the optical flow energy into a compact spatial cluster. After percentile thresholding, the weighted centroid falls within that cluster and provides a localized impact coordinate.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig/heatmap.png}
+    \caption{Cumulative Farneback optical flow magnitude $M(u,v)$ on a synthetic CARLA video after 90th-percentile thresholding. The bright region corresponds to the collision area; diffuse background motion is suppressed.}
+    \label{fig:heatmap}
+\end{figure}
 
 \subsection{Collision Type Classification}
 

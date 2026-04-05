@@ -3,18 +3,27 @@
 
 \subsection{Dataset}
 
-The ACCIDENT @ CVPR 2026 dataset~\cite{accident2026} has two splits. The development split contains 2,211 synthetic CCTV-style videos rendered with the CARLA simulator~\cite{dosovitskiy2017carla} across five collision categories, each annotated with accident time, impact coordinates, and collision type. Figure~\ref{fig:type_freq} shows the class distribution: rear-end collisions are the most frequent (794 videos), followed by head-on (588), sideswipe (405), t-bone (358), and single-vehicle (66). The test split contains 2,027 real surveillance recordings collected from public traffic camera feeds. Test videos vary in resolution, frame rate, and lighting. Compression artifacts, lens distortion, and partial occlusion are common. Participants may not annotate the test split by hand, so any method that runs on it must generalize from the synthetic domain or from general-purpose pre-training alone.
+The ACCIDENT @ CVPR 2026 dataset~\cite{accident2026} has two splits. The development split contains 2,211 synthetic CCTV-style videos rendered with the CARLA simulator~\cite{dosovitskiy2017carla} across five collision categories, each annotated with accident time, impact coordinates, and collision type. Figure~\ref{fig:type_freq} shows the class distribution: rear-end collisions are the most frequent category (794 videos), followed by head-on (588), sideswipe (405), t-bone (358), and single-vehicle (66). The test split contains 2,027 real surveillance recordings collected from public traffic camera feeds. Test videos vary in resolution, frame rate, and lighting. Compression artifacts, lens distortion, and partial occlusion are common. Participants may not annotate the test split by hand, so any method that runs on it must generalize from the synthetic domain or from general-purpose pre-training alone.
+
+All synthetic videos are rendered at $1920 \times 1080$ resolution with a fixed 20 FPS frame rate. Clip durations range from 5.8 to 32.2 seconds (mean 17.7 seconds, standard deviation 3.9 seconds). The ground-truth accident time occurs at a median of 6.9 seconds into the clip (interquartile range 5.2 to 9.8 seconds), which places most collisions in the first half of each recording. Impact coordinates are normalized to $[0,1]^{2}$ and cluster toward the frame center: both $c_x$ and $c_y$ have means near 0.50 and standard deviations of 0.13 and 0.18, respectively (Figure~\ref{fig:impact_scatter}).
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{fig/collision_type_freq.png}
-    \caption{Collision type distribution in the synthetic development split. Rear-end is the most frequent category; single-vehicle events are rare.}
+    \caption{Collision type frequency in the synthetic development split. The rear-end category has 12 times more samples than the single-vehicle category.}
     \label{fig:type_freq}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig/impact_scatter.png}
+    \caption{Ground-truth impact point distribution across 2,211 synthetic videos, colored by collision type. Points cluster near the frame center, with head-on and sideswipe events showing the widest spatial spread.}
+    \label{fig:impact_scatter}
 \end{figure}
 
 \subsection{Implementation}
 
-We run inference on a single NVIDIA T4 GPU. Collision classification uses the ViT-B/32 variant of CLIP~\cite{radford2021learning}. All video frames are resized to $320 \times 180$ for frame-differencing and optical flow. We do not train or fine-tune any model weights on either split of the dataset.
+We run inference on a single NVIDIA T4 GPU provided by the Kaggle platform. Collision classification uses the ViT-B/32 variant of CLIP~\cite{radford2021learning}. All video frames are resized to $320 \times 180$ for frame-differencing and optical flow. We do not train or fine-tune any model weights on either split of the dataset. Processing all 2,027 test videos takes approximately 4 hours.
 
 Table~\ref{tab:hyperparams} lists the hyperparameters used across the pipeline. We chose these values by visual inspection on a handful of synthetic videos and kept them fixed for all test predictions.
 
@@ -48,38 +57,22 @@ Table~\ref{tab:hyperparams} lists the hyperparameters used across the pipeline. 
 
 \subsection{Scoring}
 
-Submissions are scored with the harmonic mean of three quantities. The temporal component measures how close the predicted accident time is to the ground-truth time, using a Gaussian similarity with $\sigma_t = 2.0$ seconds that equals 1.0 for a perfect prediction and decays toward zero as the error grows. The spatial component applies the same Gaussian form with $\sigma_s = 0.1$ to the Euclidean distance between predicted and true impact coordinates in normalized $[0,1]$ space. The classification component counts top-1 accuracy over the test set. Because the harmonic mean is used, a zero in any one component drives the overall score to zero.
+Submissions are scored with the harmonic mean of three quantities. The temporal component $\mathcal{T}$ measures the proximity of the predicted accident time to the ground-truth via a Gaussian kernel with $\sigma_t = 2.0$ seconds: $\mathcal{T} = \exp\!\big({-\tfrac{1}{2}}\big(\tfrac{t_{\text{pred}} - t_{\text{gt}}}{\sigma_t}\big)^{2}\big)$. The spatial component $\mathcal{S}$ applies the same functional form with $\sigma_s = 0.1$ to the Euclidean distance between predicted and true impact coordinates in normalized $[0,1]$ space. The classification component $\mathcal{C}$ is top-1 accuracy: 1 if the predicted type matches the ground truth, 0 otherwise. The final score is $\mathcal{H} = 3 / (1/\mathcal{T} + 1/\mathcal{S} + 1/\mathcal{C})$, so a zero in any component forces the composite score to zero.
 
 \subsection{Results}
 
 Our pipeline achieves a public leaderboard score of \textbf{0.2523} on the real CCTV test set. This score is computed on approximately 25\% of the test data; the final ranking uses the remaining 75\%, so standings may shift.
 
-On the 10-video synthetic calibration subset, the per-component mean scores are $\overline{\mathcal{T}} = 0.438$ for temporal localization, $\overline{\mathcal{S}} = 0.168$ for spatial localization, and $\overline{\mathcal{C}} = 0.0$ for classification. The zero classification score on calibration is expected: CLIP consistently predicts t-bone for this head-on-only subset, confirming that the domain gap between CCTV imagery and CLIP's internet training distribution is the dominant bottleneck. Figure~\ref{fig:score_dist} shows the score distributions across the calibration set.
+On a 10-video calibration subset drawn from the synthetic split, the per-component mean scores are $\overline{\mathcal{T}} = 0.438$, $\overline{\mathcal{S}} = 0.168$, and $\overline{\mathcal{C}} = 0.0$. The zero classification score on this calibration subset is expected: all 10 calibration videos belong to the head-on category, but CLIP predicts t-bone for each one. The best individual temporal score (0.94) and the best individual spatial score (0.96) show that when the pipeline locks onto the correct event, both the time and location estimates can be accurate. The composite score drops to zero because the harmonic mean penalizes any single component failure.
+
+Figure~\ref{fig:pred_dist} shows the distribution of predicted collision types across the full test set. Sideswipe is the most frequently predicted category (770 of 2,027 videos), followed by single (687), t-bone (425), head-on (122), and rear-end (23). This distribution differs substantially from the synthetic training split (Figure~\ref{fig:type_freq}), where rear-end dominates. The discrepancy indicates that CLIP's visual similarity scores are sensitive to the viewing angle and scene geometry differences between CARLA renders and real CCTV footage, rather than reflecting the underlying collision dynamics.
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]{fig/score_distributions.png}
-    \caption{Component score distributions on the synthetic calibration set (10 videos). Temporal scores are spread between 0 and 1; spatial scores cluster near zero; classification is uniformly zero due to systematic misclassification.}
-    \label{fig:score_dist}
+    \includegraphics[width=\linewidth]{fig/pred_collision_dist.png}
+    \caption{Predicted collision type distribution on the 2,027 real test videos. Sideswipe and single dominate the predictions, while rear-end is rarely selected, inverting the synthetic training distribution.}
+    \label{fig:pred_dist}
 \end{figure}
 
-Figure~\ref{fig:temporal_signal} shows the frame-difference series and corresponding z-score anomaly signal on a synthetic calibration video. The raw signal captures both gradual intensity variations from normal driving and a sharp spike at the collision. The z-score normalization isolates the anomalous event above the baseline noise floor.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{fig/frame_diff_zscore.png}
-    \caption{Temporal localization signal on a synthetic video. Top: raw mean absolute frame difference. Bottom: z-score anomaly series with the detection threshold (dashed line). The collision event produces a distinct spike.}
-    \label{fig:temporal_signal}
-\end{figure}
-
-Figure~\ref{fig:heatmap} shows a sample motion-energy map from one of the synthetic calibration videos. Flow magnitude accumulates in a concentrated region around the simulated collision, which confirms that the Farneback accumulation and 90th-percentile thresholding steps isolate the correct spatial area.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{fig/heatmap.png}
-    \caption{Accumulated Farneback optical flow magnitude on a synthetic calibration video after 90th-percentile thresholding. High values concentrate at the collision site; background motion is suppressed.}
-    \label{fig:heatmap}
-\end{figure}
-
-\paragraph{Where things go wrong.}
-We see three main error patterns. (1) Temporal localization breaks when a camera captures large-scale scene motion, such as wind-blown trees or shifting cloud shadows, that creates frame-difference spikes as large as the collision itself. (2) The spatial centroid drifts toward the center of the frame when background motion is spread evenly across the image, because the weighted average does not isolate a single high-activity cluster. (3) CLIP misclassifies collisions when the surveillance frame resolution is low or the viewpoint is oblique, since CLIP was trained on internet photographs that look quite different from overhead CCTV stills. The nonzero public leaderboard score (0.2523) indicates that the pipeline does achieve partial classification accuracy on the broader test set, even though calibration on head-on-only synthetic videos shows a zero match rate.
+\paragraph{Error analysis.}
+Three error patterns dominate the pipeline. (1) Temporal localization breaks when the camera captures large-scale background motion, such as swaying vegetation or cloud shadows, that produces frame-difference spikes comparable in magnitude to actual collisions. (2) The spatial centroid drifts when multiple vehicles move simultaneously across the frame, because the weighted average spreads over all active regions instead of concentrating on one cluster. The ground-truth impact distribution (Figure~\ref{fig:impact_scatter}) clusters near the frame center, which partially explains why even noisy spatial predictions stay within a reasonable distance of the correct location. (3) CLIP misclassifies when CCTV viewpoints are overhead or oblique, since its training data consists of internet photographs taken at roughly eye level. The predicted type distribution (Figure~\ref{fig:pred_dist}) suggests that CLIP responds to general scene geometry cues rather than collision-specific visual features, which accounts for the systematic shift away from rear-end toward sideswipe and single categories.
