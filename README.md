@@ -353,10 +353,17 @@ cd preprint && latexmk -pdf main.tex
 
 <div align="center">
 
-| | |
-| :--- | :--- |
-| **Amey Thakur** | Independent Researcher, Toronto, Canada &nbsp; [ORCID](https://orcid.org/0000-0001-5644-1575) &nbsp;·&nbsp; [GitHub](https://github.com/Amey-Thakur) |
-| **Sarvesh Talele** | Independent Researcher, Mumbai, India &nbsp; [ORCID](https://orcid.org/0009-0002-0818-461X) &nbsp;·&nbsp; [GitHub](https://github.com/sarveshtalele) |
+**Amey Thakur** &nbsp;·&nbsp; Independent Researcher, Toronto, Canada
+
+[![ORCID](https://img.shields.io/badge/ORCID-0000--0001--5644--1575-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0000-0001-5644-1575)
+[![GitHub](https://img.shields.io/badge/GitHub-Amey--Thakur-181717?logo=github&logoColor=white)](https://github.com/Amey-Thakur)
+
+<br>
+
+**Sarvesh Talele** &nbsp;·&nbsp; Independent Researcher, Mumbai, India
+
+[![ORCID](https://img.shields.io/badge/ORCID-0009--0002--0818--461X-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0009-0002-0818-461X)
+[![GitHub](https://img.shields.io/badge/GitHub-sarveshtalele-181717?logo=github&logoColor=white)](https://github.com/sarveshtalele)
 
 </div>
 
