@@ -29,12 +29,28 @@ no fine-tuning, no labelled real-world data, and only pre-trained weights.
 [![Technology](https://img.shields.io/badge/Technology-Python_%7C_OpenCV_%7C_CLIP-8250DF)](https://github.com/openai/CLIP)
 [![Public Leaderboard](https://img.shields.io/badge/Public_Leaderboard-0.2523-3949AB)](https://kaggle.com/competitions/accident/leaderboard)
 [![Status](https://img.shields.io/badge/Status-Submitted-2EA043)](https://kaggle.com/competitions/accident)
+[![License](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey)](LICENSE)
 
 <br>
 
 <img src="figure/sampled_frames.png" alt="Six chronological frames from a synthetic CARLA traffic incident, showing an overhead view of a road junction as two vehicles approach each other" width="100%">
 
 </div>
+
+<!-- AUTHORS -->
+<div align="center">
+
+  <a name="authors"></a>
+  ## Authors
+
+| <a href="https://github.com/Amey-Thakur"><img src="https://github.com/Amey-Thakur.png" width="150" height="150" alt="Amey Thakur"></a><br>[**Amey Thakur**](https://github.com/Amey-Thakur)<br><br>[![ORCID](https://img.shields.io/badge/ORCID-0000--0001--5644--1575-A6CE39.svg)](https://orcid.org/0000-0001-5644-1575) | <a href="https://github.com/sarveshtalele"><img src="https://github.com/sarveshtalele.png" width="150" height="150" alt="Sarvesh Talele"></a><br>[**Sarvesh Talele**](https://github.com/sarveshtalele)<br><br>[![ORCID](https://img.shields.io/badge/ORCID-0009--0002--0818--461X-A6CE39.svg)](https://orcid.org/0009-0002-0818-461X) |
+| :---: | :---: |
+
+</div>
+
+> [!IMPORTANT]
+> ### 🤝🏻 Special Acknowledgement
+> *Special thanks to **[Sarvesh Talele](https://github.com/sarveshtalele)** for his meaningful contributions, guidance, and support that helped shape this work.*
 
 ---
 
@@ -350,31 +366,16 @@ cd preprint && latexmk -pdf main.tex
 
 <br>
 
-## Authors
-
-<div align="center">
-
-**Amey Thakur** &nbsp;·&nbsp; Independent Researcher, Toronto, Canada
-
-[![ORCID](https://img.shields.io/badge/ORCID-0000--0001--5644--1575-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0000-0001-5644-1575)
-[![GitHub](https://img.shields.io/badge/GitHub-Amey--Thakur-181717?logo=github&logoColor=white)](https://github.com/Amey-Thakur)
-
-<br>
-
-**Sarvesh Talele** &nbsp;·&nbsp; Independent Researcher, Mumbai, India
-
-[![ORCID](https://img.shields.io/badge/ORCID-0009--0002--0818--461X-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0009-0002-0818-461X)
-[![GitHub](https://img.shields.io/badge/GitHub-sarveshtalele-181717?logo=github&logoColor=white)](https://github.com/sarveshtalele)
-
-</div>
-
-<br>
-
 ## License
 
-Released for academic research in connection with the ACCIDENT @ CVPR 2026
-competition. The CVPR style files under `paper/` and the arXiv style file under
-`preprint/` carry the licences of their own authors.
+Released under the [Creative Commons Attribution 4.0 International](LICENSE)
+licence. You are free to share and adapt this material for any purpose,
+including commercially, provided you give appropriate credit.
+
+The CVPR style files under `paper/` and the arXiv style file under `preprint/`
+are third-party and carry the licences of their own authors.
+
+Copyright © 2026 Amey Thakur, Sarvesh Talele
 
 <br>
 

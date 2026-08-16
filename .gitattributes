@@ -1,0 +1,6 @@
+# Notebooks are exported artefacts: never line-ending converted, never merged
+*.ipynb -text -diff -merge
+
+# Binary assets
+*.png binary
+*.pdf binary
