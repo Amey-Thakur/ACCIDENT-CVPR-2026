@@ -271,7 +271,10 @@ the largest single source of loss above.
 │   └── images/             # Figures used in the preprint
 ├── Notebook/               # Kaggle notebook, exported
 ├── figure/                 # Every diagnostic and analysis figure
-└── .github/workflows/      # Compiles both PDFs on push
+├── .github/workflows/      # Compiles both PDFs on push
+├── CITATION.cff            # How to cite this work
+├── codemeta.json           # Machine-readable project metadata
+└── LICENSE                 # CC BY 4.0
 ```
 
 <br>
