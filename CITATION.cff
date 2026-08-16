@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this zero-shot traffic accident understanding research, please cite the preprint as below."
+authors:
+- family-names: "Thakur"
+  given-names: "Amey"
+  orcid: "https://orcid.org/0000-0001-5644-1575"
+- family-names: "Talele"
+  given-names: "Sarvesh"
+  orcid: "https://orcid.org/0009-0002-0818-461X"
+title: "A Modular Zero-Shot Pipeline for Accident Detection, Localization, and Classification in Traffic Surveillance Video"
+version: 1.0.0
+date-released: 2026-04-05
+url: "https://arxiv.org/abs/2604.09685"
+repository-code: "https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026"
+license: CC-BY-4.0
+keywords:
+  - zero-shot learning
+  - accident detection
+  - traffic surveillance
+  - optical flow
+  - vision-language models
+preferred-citation:
+  type: article
+  title: "A Modular Zero-Shot Pipeline for Accident Detection, Localization, and Classification in Traffic Surveillance Video"
+  authors:
+  - family-names: "Thakur"
+    given-names: "Amey"
+    orcid: "https://orcid.org/0000-0001-5644-1575"
+  - family-names: "Talele"
+    given-names: "Sarvesh"
+    orcid: "https://orcid.org/0009-0002-0818-461X"
+  journal: "arXiv preprint arXiv:2604.09685"
+  year: 2026
+  month: 4
+  url: "https://arxiv.org/abs/2604.09685"
