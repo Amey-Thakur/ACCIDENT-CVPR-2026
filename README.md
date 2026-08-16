@@ -16,9 +16,10 @@ no fine-tuning, no labelled real-world data, and only pre-trained weights.
 
 [Preprint](https://arxiv.org/abs/2604.09685) &nbsp;·&nbsp;
 [Notebook](https://www.kaggle.com/code/ameythakur20/zero-shot-cctv-traffic-accident-understanding/) &nbsp;·&nbsp;
+[Write-up](https://amey-thakur.github.io/posts/2026-04-05-a-modular-zero-shot-pipeline-for-accident-detection-localization-and-classification/) &nbsp;·&nbsp;
 [Competition](https://kaggle.com/competitions/accident) &nbsp;·&nbsp;
 [Workshop](https://wad.vision/) &nbsp;·&nbsp;
-[Write-up](https://amey-thakur.github.io/posts/2026-04-05-a-modular-zero-shot-pipeline-for-accident-detection-localization-and-classification/)
+[Discussions](https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/discussions)
 
 <br>
 
@@ -381,6 +382,7 @@ competition. The CVPR style files under `paper/` and the arXiv style file under
 
 **[Preprint](https://arxiv.org/abs/2604.09685)** &nbsp;·&nbsp;
 **[Notebook](https://www.kaggle.com/code/ameythakur20/zero-shot-cctv-traffic-accident-understanding/)** &nbsp;·&nbsp;
-**[Write-up](https://amey-thakur.github.io/posts/2026-04-05-a-modular-zero-shot-pipeline-for-accident-detection-localization-and-classification/)**
+**[Write-up](https://amey-thakur.github.io/posts/2026-04-05-a-modular-zero-shot-pipeline-for-accident-detection-localization-and-classification/)** &nbsp;·&nbsp;
+**[Discussions](https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/discussions)**
 
 </div>
