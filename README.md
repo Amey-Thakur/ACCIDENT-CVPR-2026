@@ -33,7 +33,7 @@ no fine-tuning, no labelled real-world data, and only pre-trained weights.
 
 <br>
 
-<img src="figure/sampled_frames.png" alt="Six chronological frames from a synthetic CARLA traffic incident, showing an overhead view of a road junction as two vehicles approach each other" width="100%">
+<img src=".github/social-preview.png" alt="ACCIDENT @ CVPR 2026, zero-shot accident understanding by Amey Thakur and Sarvesh Talele. When, from frame-difference peak detection. Where, from optical flow magnitude centroid. What, from CLIP multi-prompt matching. 2,027 real CCTV videos, no fine-tuning, score 0.2523" width="100%">
 
 </div>
 
@@ -159,6 +159,10 @@ from 5.8 to 32.2 seconds, mean 17.7. The ground-truth accident falls at a median
 of 6.9 seconds into the clip, so most collisions sit in the first half of the
 recording. Impact coordinates cluster near the frame centre, with both means
 near 0.50.
+
+<p align="center">
+  <img src="figure/sampled_frames.png" width="100%" alt="Six chronological frames from a synthetic CARLA traffic incident, an overhead view of a road junction as two vehicles approach each other"/>
+</p>
 
 <p align="center">
   <img src="figure/collision_type_freq.png" width="45%" alt="Collision type frequency in the development split"/>
