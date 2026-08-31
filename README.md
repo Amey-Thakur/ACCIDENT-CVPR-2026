@@ -23,13 +23,14 @@ no fine-tuning, no labelled real-world data, and only pre-trained weights.
 
 <br>
 
+[![License](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey)](LICENSE)
 [![Venue](https://img.shields.io/badge/Venue-ACCIDENT_%40_CVPR_2026-BF3989)](https://kaggle.com/competitions/accident)
 [![Preprint](https://img.shields.io/badge/Preprint-arXiv%3A2604.09685-B31B1B)](https://arxiv.org/abs/2604.09685)
 [![Notebook](https://img.shields.io/badge/Notebook-Kaggle-20BEFF)](https://www.kaggle.com/code/ameythakur20/zero-shot-cctv-traffic-accident-understanding/)
 [![Technology](https://img.shields.io/badge/Technology-Python_%7C_OpenCV_%7C_CLIP-8250DF)](https://github.com/openai/CLIP)
 [![Public Leaderboard](https://img.shields.io/badge/Public_Leaderboard-0.2523-3949AB)](https://kaggle.com/competitions/accident/leaderboard)
 [![Status](https://img.shields.io/badge/Status-Submitted-2EA043)](https://kaggle.com/competitions/accident)
-[![License](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey)](LICENSE)
+[![Authors](https://img.shields.io/badge/Authors-Amey_Thakur_%26_Sarvesh_Talele-0969DA)](https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/graphs/contributors)
 
 <br>
 
