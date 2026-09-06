@@ -163,8 +163,6 @@ five written descriptions of the collision as a bystander would put it.
   </a>
 </p>
 
-<video src="https://raw.githubusercontent.com/Amey-Thakur/ACCIDENT-CVPR-2026/main/.github/media/accident-explainer.mp4" controls width="100%"></video>
-
 <p align="center"><sub><b>Explainer video.</b> A walkthrough of the three modules end to end. Click the frame above to play it, or <a href="https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/raw/main/.github/media/accident-explainer.mp4">download the file</a>.</sub></p>
 
 <br>
