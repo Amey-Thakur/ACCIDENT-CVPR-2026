@@ -33,3 +33,7 @@ preferred-citation:
   year: 2026
   month: 4
   url: "https://arxiv.org/abs/2604.09685"
+identifiers:
+  - type: other
+    value: "2026-08-16"
+    description: "Date this repository was created on GitHub."

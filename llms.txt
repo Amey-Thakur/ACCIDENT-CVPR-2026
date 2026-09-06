@@ -1,0 +1,36 @@
+# ACCIDENT @ CVPR 2026
+
+> Zero-shot pipeline for traffic accident detection, localization and
+> classification in CCTV video. Frame-difference peak detection, Farneback
+> optical flow centroids and CLIP prompt matching, with no fine-tuning.
+> ACCIDENT @ CVPR 2026.
+
+Author: Amey Thakur, ORCID 0000-0001-5644-1575
+Co-author: Sarvesh Talele, ORCID 0009-0002-0818-461X
+Co-author: Amey Thakur, ORCID 0000-0001-5644-1575
+Co-author: Sarvesh Talele, ORCID 0009-0002-0818-461X
+Course code: CVPR 2026
+Licence: CC BY 4.0, attribution required
+Repository created: 16 August 2026
+Work dated: 5 April 2026
+
+## What is in this repository
+
+- Notebook, 1 file
+- figure, 20 files
+- paper, 30 files
+- preprint, 12 files
+
+## Subject terms
+
+accident-detection, anomaly-detection, carla-simulator, clip,
+computer-vision, cvpr2026, deep-learning, kaggle-competition,
+machine-learning, opencv, optical-flow, python, traffic-surveillance,
+video-understanding, vision-language-model, zero-shot-learning
+
+## Where this sits
+
+- This repository: https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026
+- Project page: https://arxiv.org/abs/2604.09685
+- Author: https://github.com/Amey-Thakur
+- Research notes and reflections: https://amey-thakur.github.io/

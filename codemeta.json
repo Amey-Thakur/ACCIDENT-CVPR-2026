@@ -1,13 +1,14 @@
 {
     "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
     "@type": "SoftwareSourceCode",
-    "license": "https://spdx.org/licenses/CC-BY-4.0.html",
     "name": "ACCIDENT @ CVPR 2026",
-    "version": "1.0.0",
-    "runtimePlatform": [
-        "Python 3.10+",
-        "OpenCV 4.x",
-        "PyTorch 2.0+"
+    "description": "A modular zero-shot pipeline that predicts the time, impact location and type of a traffic collision from surveillance video, using frame-difference peak detection, Farneback optical flow centroids and CLIP prompt matching, with no fine-tuning.",
+    "identifier": "ACCIDENT-CVPR-2026",
+    "license": "https://spdx.org/licenses/CC-BY-4.0.html",
+    "programmingLanguage": [
+        "Python",
+        "TeX",
+        "Markdown"
     ],
     "author": [
         {
@@ -23,12 +24,44 @@
             "@id": "https://orcid.org/0009-0002-0818-461X"
         }
     ],
-    "description": "A modular zero-shot pipeline that predicts the time, impact location and type of a traffic collision from surveillance video, using frame-difference peak detection, Farneback optical flow centroids and CLIP prompt matching, with no fine-tuning.",
-    "programmingLanguage": [
-        "Python",
-        "TeX",
-        "Markdown"
-    ],
+    "dateCreated": "2026-08-16",
+    "dateReleased": "2026-04-05",
     "codeRepository": "https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026",
+    "developmentStatus": "complete",
+    "runtimePlatform": [
+        "Python 3.10+",
+        "OpenCV 4.x",
+        "PyTorch 2.0+"
+    ],
+    "keywords": [
+        "Accident Detection",
+        "Anomaly Detection",
+        "CARLA Simulator",
+        "CLIP",
+        "Computer Vision",
+        "Cvpr2026",
+        "Deep Learning",
+        "Kaggle Competition",
+        "Machine Learning",
+        "OpenCV",
+        "Optical Flow",
+        "Python",
+        "Traffic Surveillance",
+        "Video Understanding",
+        "Vision Language Model",
+        "Zero Shot Learning",
+        "CVPR 2026",
+        "Jupyter Notebooks",
+        "Temporal",
+        "Spatial",
+        "Classification",
+        "Amey Thakur",
+        "amey",
+        "ameythakur",
+        "amey-thakur",
+        "ameyarc"
+    ],
+    "url": "https://arxiv.org/abs/2604.09685",
+    "version": "1.0.0",
     "referencePublication": "https://arxiv.org/abs/2604.09685"
 }
