@@ -60,6 +60,10 @@ no fine-tuning, no labelled real-world data, and only pre-trained weights.
 
 ## The problem
 
+https://github.com/user-attachments/assets/026e0349-3335-4b21-84d6-36e13dcb3222
+
+<p align="center"><sub>The method in one pass: what the three modules read out of a clip nothing was trained on.</sub></p>
+
 Road traffic crashes kill over one million people each year. Cameras already
 record much of it. The difficulty is that methods which read that footage are
 trained on annotated video from the site where they run, so every new camera
@@ -414,10 +418,5 @@ Copyright © 2026 Amey Thakur, Sarvesh Talele
 **[Discussions](https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/discussions)**
 
 </div>
-
-
-
-
-https://github.com/user-attachments/assets/026e0349-3335-4b21-84d6-36e13dcb3222
 
 
