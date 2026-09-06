@@ -15,6 +15,7 @@ no fine-tuning, no labelled real-world data, and only pre-trained weights.
 <br>
 
 [Preprint](https://arxiv.org/abs/2604.09685) &nbsp;·&nbsp;
+[Explainer](https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/raw/main/.github/media/accident-explainer.mp4) &nbsp;·&nbsp;
 [Notebook](https://www.kaggle.com/code/ameythakur20/zero-shot-cctv-traffic-accident-understanding/) &nbsp;·&nbsp;
 [Write-up](https://amey-thakur.github.io/posts/2026-04-05-a-modular-zero-shot-pipeline-for-accident-detection-localization-and-classification/) &nbsp;·&nbsp;
 [Competition](https://kaggle.com/competitions/accident) &nbsp;·&nbsp;
@@ -98,6 +99,12 @@ property governs how the results below should be read.
 
 ## The pipeline
 
+<p align="center">
+  <img src=".github/media/accident-pipeline.gif" width="100%" alt="The three modules running on one clip in sequence: the frame-difference z-score curve rising to a peak at the moment of impact, the cumulative optical flow map resolving to a single bright cluster with its weighted centroid marked, and the five CLIP prompt scores resolving to one collision type"/>
+</p>
+
+<p align="center"><sub>All three modules on one clip. The peak fixes <b>when</b>, the flow centroid fixes <b>where</b>, the prompt scores name <b>what</b>.</sub></p>
+
 ### 1. When: temporal localization
 
 A collision produces a sudden change in image intensity. The module builds a
@@ -145,6 +152,18 @@ five written descriptions of the collision as a bystander would put it.
 | `sideswipe` | "two vehicles scraping alongside each other" |
 | `single` | "a single car crashing into a wall or obstacle" |
 | `t-bone` | "a car hitting the side of another car at an intersection" |
+
+<br>
+
+### The method in full
+
+<p align="center">
+  <a href="https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/raw/main/.github/media/accident-explainer.mp4">
+    <img src=".github/media/accident-thumbnail.png" width="70%" alt="Explainer video: a walkthrough of the three modules, the scoring function, and the leaderboard result"/>
+  </a>
+</p>
+
+<p align="center"><sub>A walkthrough of the three modules end to end. Click to play, or <a href="https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/raw/main/.github/media/accident-explainer.mp4">download the file</a>.</sub></p>
 
 <br>
 
