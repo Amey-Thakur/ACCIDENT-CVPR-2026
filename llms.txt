@@ -7,8 +7,6 @@
 
 Author: Amey Thakur, ORCID 0000-0001-5644-1575
 Co-author: Sarvesh Talele, ORCID 0009-0002-0818-461X
-Co-author: Amey Thakur, ORCID 0000-0001-5644-1575
-Co-author: Sarvesh Talele, ORCID 0009-0002-0818-461X
 Course code: CVPR 2026
 Licence: CC BY 4.0, attribution required
 Repository created: 16 August 2026
