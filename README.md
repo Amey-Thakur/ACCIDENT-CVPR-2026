@@ -157,11 +157,13 @@ five written descriptions of the collision as a bystander would put it.
 
 ### The method in full
 
-<video src="https://raw.githubusercontent.com/Amey-Thakur/ACCIDENT-CVPR-2026/main/.github/media/accident-explainer.mp4" controls width="100%">
-  <img src=".github/media/accident-thumbnail.png" alt="Explainer video: a walkthrough of the three modules, the scoring function, and the leaderboard result"/>
-</video>
+<p align="center">
+  <a href="https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/raw/main/.github/media/accident-explainer.mp4">
+    <img src=".github/media/accident-thumbnail.png" width="80%" alt="Explainer video: a walkthrough of the three modules, the scoring function and the leaderboard result"/>
+  </a>
+</p>
 
-<p align="center"><sub>A walkthrough of the three modules end to end, or <a href="https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/raw/main/.github/media/accident-explainer.mp4">download the file</a>.</sub></p>
+<p align="center"><sub><b>Explainer video.</b> A walkthrough of the three modules end to end. Click the frame above to play it, or <a href="https://github.com/Amey-Thakur/ACCIDENT-CVPR-2026/raw/main/.github/media/accident-explainer.mp4">download the file</a>.</sub></p>
 
 <br>
 
